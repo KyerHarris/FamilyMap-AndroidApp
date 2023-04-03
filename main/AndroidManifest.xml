@@ -20,6 +20,12 @@
         android:theme="@style/Theme.FamilyMap"
         android:usesCleartextTraffic="true"
         tools:targetApi="33">
+        <activity
+            android:name=".EventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PersonActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -33,12 +39,12 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="$ (GOOGLEAPI)" />
+            android:value="${GOOGLEAPI}" />
 
         <activity
             android:name=".GUI.SettingsActivity"
             android:exported="false"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".GUI.MainActivity"
             android:exported="true"

@@ -18,11 +18,11 @@
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"
+            android:layout_weight="5"
             tools:layout="@layout/fragment_map"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal"
             android:id="@+id/eventInfo">
@@ -43,13 +43,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textSize="24sp"
-                    android:text="Temporary"
+                    android:text="Select A Marker"
                     android:textAlignment="center"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="select a marker"
+                    android:text="To Learn More"
                     android:textSize="24sp"
                     android:id="@+id/mapText_bio"/>
             </LinearLayout>
