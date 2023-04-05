@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import Model.*;
 
 import java.util.HashMap;
@@ -17,12 +19,14 @@ import kyer.harris.familymap.R;
 
 public class PersonActivityAdapter extends BaseExpandableListAdapter {
     private Context context;
+    private Person individual;
     private List<String> expandableListTitle;
     private List<Event> expandableListEvents;
     private List<Person> expandableListPersons;
 
-    public PersonActivityAdapter(Context context, List<String> expandableListTitle, List<Event> expandableListEvents, List<Person> expandableListPersons) {
+    public PersonActivityAdapter(Context context, List<String> expandableListTitle, List<Event> expandableListEvents, List<Person> expandableListPersons, Person individual) {
         this.context = context;
+        this.individual = individual;
         this.expandableListTitle = expandableListTitle;
         this.expandableListEvents = expandableListEvents;
         this.expandableListPersons = expandableListPersons;
@@ -46,14 +50,45 @@ public class PersonActivityAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int listPosition, final int expandedListPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final String expandedListText = (String) getChild(listPosition, expandedListPosition);
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_item, null);
         }
-        TextView expandedListTextView = (TextView) convertView
-                .findViewById(R.id.expandedListItem);
-        expandedListTextView.setText(expandedListText);
+        TextView expandedListTextInfo = (TextView) convertView.findViewById(R.id.expandedListInfo);
+        TextView expandedListTextDescription = (TextView) convertView.findViewById(R.id.expandedListDescription);
+        switch(listPosition){
+            case 0:
+                final Event event = (Event)getChild(listPosition, expandedListPosition);
+                String info = event.getEventType() + " " + event.getCity() + ", " + event.getCountry() + " (" + event.getYear() + ")";
+                Person person = DataCache.getInstance().getPerson(event.getPersonID());
+                String description = person.getFirstName() + " " + person.getLastName();
+                expandedListTextInfo.setText(info);
+                expandedListTextDescription.setText(description);
+                break;
+            case 1:
+                person = (Person)getChild(listPosition, expandedListPosition);
+                info = person.getFirstName() + " " + person.getLastName();
+                if(person.getFatherID() != null) {
+                    if (person.getFatherID().equals(individual.getPersonID()) || person.getMotherID().equals(individual.getPersonID())) {
+                        description = "CHILD";
+                    }
+                }
+                if(person.getSpouseID() != null && person.getSpouseID().equals(individual.getPersonID())){
+                    description = "SPOUSE";
+                }
+                else if(individual.getFatherID() != null && individual.getFatherID().equals(person.getPersonID())){
+                    description= "FATHER";
+                }
+                else if(individual.getMotherID() != null && individual.getMotherID().equals(person.getPersonID())){
+                    description = "MOTHER";
+                }
+                else{
+                    description = "CHILD";
+                }
+                expandedListTextInfo.setText(info);
+                expandedListTextDescription.setText(description);
+                break;
+        }
         return convertView;
     }
 

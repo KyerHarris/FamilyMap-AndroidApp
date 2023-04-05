@@ -21,10 +21,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="33">
         <activity
-            android:name=".EventActivity"
+            android:name=".GUI.EventActivity"
             android:exported="false" />
         <activity
-            android:name=".PersonActivity"
+            android:name=".GUI.PersonActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.

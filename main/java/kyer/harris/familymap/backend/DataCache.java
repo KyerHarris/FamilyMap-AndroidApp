@@ -29,6 +29,21 @@ public class DataCache {
 
     Settings settings = new Settings();
 
+    public void reset(){
+        people.clear();
+        events.clear();
+        maternalEvents.clear();
+        maternalAncestors.clear();
+        paternalEvents.clear();
+        paternalAncestors.clear();
+        femaleEvents.clear();
+        femaleAncestors.clear();
+        maleEvents.clear();
+        maleAncestors.clear();
+        authtoken = null;
+        personID = null;
+    }
+
     public Settings getSettings() {
         return settings;
     }

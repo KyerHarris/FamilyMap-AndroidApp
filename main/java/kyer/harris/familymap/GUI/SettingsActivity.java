@@ -109,6 +109,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
         logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                DataCache.getInstance().reset();
                 startActivity(new Intent(SettingsActivity.this, MainActivity.class));
             }
         });
