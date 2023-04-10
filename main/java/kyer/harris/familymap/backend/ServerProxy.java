@@ -16,6 +16,9 @@ public class ServerProxy {
         serverHost = args[0];
         serverPort = args[1];
     }
+    public void setServerHost(String newHost){
+        serverHost = newHost;
+    }
 
     public LoginResult login(LoginRequest request){
         LoginResult result = null;

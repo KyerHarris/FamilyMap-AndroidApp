@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -19,24 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilyMap"
         android:usesCleartextTraffic="true"
-        tools:targetApi="33">
+        tools:targetApi="33" >
+        <activity
+            android:name=".GUI.SearchActivity"
+            android:exported="false"
+            android:parentActivityName=".GUI.MainActivity"/>
         <activity
             android:name=".GUI.EventActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".GUI.MainActivity" />
         <activity
             android:name=".GUI.PersonActivity"
-            android:exported="false" />
-        <!--
-             TODO: Before you run your application, you need a Google Maps API key.
+            android:exported="false"
+            android:parentActivityName=".GUI.MainActivity" />
 
-             To get one, follow the directions here:
-
-                https://developers.google.com/maps/documentation/android-sdk/get-api-key
-
-             Once you have your API key (it starts with "AIza"), define a new property in your
-             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
-             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
-        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLEAPI}" />
@@ -48,7 +44,7 @@
         <activity
             android:name=".GUI.MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -46,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         // calling the action bar
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Family Map: Settings");
         // showing the back button in action bar
         actionBar.setDisplayHomeAsUpEnabled(true);
 

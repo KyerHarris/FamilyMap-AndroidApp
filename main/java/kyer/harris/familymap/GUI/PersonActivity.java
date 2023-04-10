@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -29,6 +31,10 @@ public class PersonActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Family Map: Person Details");
+
         setContentView(R.layout.activity_person);
         TextView firstName = findViewById(R.id.personFirstName);
         TextView lastName = findViewById(R.id.personLastName);
@@ -45,10 +51,10 @@ public class PersonActivity extends AppCompatActivity {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 switch (groupPosition){
                     case 0:
-                        //swap to events
+                        startActivity(new Intent(PersonActivity.this, EventActivity.class).putExtra("eventid", ((Event)adapter.getChild(groupPosition, childPosition)).getEventID()));
                         break;
                     case 1:
-                        //swap to new person activity
+                        startActivity(new Intent(PersonActivity.this, PersonActivity.class).putExtra("personid", ((Person)adapter.getChild(groupPosition, childPosition)).getPersonID()));
                         break;
                 }
                 return false;
@@ -64,6 +70,16 @@ public class PersonActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_back, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        super.onOptionsItemSelected(item);
+        Intent intent = new Intent(PersonActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         return true;
     }
 

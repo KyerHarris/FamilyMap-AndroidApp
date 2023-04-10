@@ -7,12 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
 import Model.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 import kyer.harris.familymap.R;

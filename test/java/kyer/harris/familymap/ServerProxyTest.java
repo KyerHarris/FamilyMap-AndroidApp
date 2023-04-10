@@ -1,9 +1,14 @@
 package kyer.harris.familymap;
 import Model.*;
 import Requests.*;
+import Results.EventResult;
+import Results.LoginResult;
+import Results.PersonResult;
+import Results.RegisterResult;
 import kyer.harris.familymap.backend.ServerProxy;
+import static org.junit.jupiter.api.Assertions.*;
 
-
+import org.junit.Before;
 import org.junit.jupiter.api.*;
 
 public class  ServerProxyTest {
@@ -12,12 +17,82 @@ public class  ServerProxyTest {
     private static final LoginRequest loginRequest = new LoginRequest(SHEILA.getUsername(), SHEILA.getPassword());
     private static final LoginRequest loginRequest2 = new LoginRequest(PATRICK.getUsername(), PATRICK.getPassword());
     private static final RegisterRequest registerRequest = new RegisterRequest(SHEILA.getUsername(), SHEILA.getPassword(), SHEILA.getEmail(), SHEILA.getFirstName(), SHEILA.getLastName(), SHEILA.getGender());
-    private ServerProxy proxy = new ServerProxy();
+    private static final ServerProxy proxy = new ServerProxy();
+    private String authToken;
 
 
+    @BeforeAll
+    private void setup(){
+        proxy.setServerHost("localhost");
+    }
     @Test
-    @DisplayName("Register Valid New User Test")
-    public void testValidNewRegister(TestInfo testInfo) {
+    @DisplayName("Register Valid User Test")
+    public void testValidRegister(){
 
+        RegisterResult result = proxy.register(registerRequest);
+        assertNotNull(result);
+        assertNotNull(result.getAuthtoken());
+        assertNotNull(result.getUsername());
+        assertNotNull(result.getPersonID());
+        authToken = result.getAuthtoken();
+    }
+    @Test
+    @DisplayName("Register Invalid User Test")
+    public void testInvalidRegister(){
+        RegisterResult result = proxy.register(registerRequest);
+        assertNotNull(result);
+        assertNotNull(result.getMessage());
+    }
+    @Test
+    @DisplayName("Login Valid User Test")
+    public void testValidLogin() {
+        LoginResult result = proxy.login(loginRequest);
+        assertNotNull(result);
+        assertNotNull(result.getAuthtoken());
+        assertNotNull(result.getPersonID());
+        assertNotNull(result.getUsername());
+    }
+    @Test
+    @DisplayName("Login Invalid User Test")
+    public void testInvalidLogin(){
+        LoginResult result = proxy.login(loginRequest2);
+        assertNotNull(result);
+        assertNotNull(result.getMessage());
+    }
+    @Test
+    @DisplayName("Retrieve Valid Relatives Test")
+    public void retrieveRelativesValid(){
+        PersonRequest request = new PersonRequest();
+        request.setAuthToken(authToken);
+        PersonResult result = proxy.getPersons(request);
+        assertNotNull(result);
+        assertNotNull(result.getData());
+    }
+    @Test
+    @DisplayName("Retrieve Invalid Relatives Test")
+    public void retrieveRelativesInvalid(){
+        PersonRequest request = new PersonRequest();
+        request.setAuthToken("test");
+        PersonResult result = proxy.getPersons(request);
+        assertNotNull(result);
+        assertNotNull(result.getMessage());
+    }
+    @Test
+    @DisplayName("Retrieve Valid Events Test")
+    public void retrieveEventsValid(){
+        EventRequest request = new EventRequest();
+        request.setAuthToken(authToken);
+        EventResult result = proxy.getEvents(request);
+        assertNotNull(result);
+        assertNotNull(result.getData());
+    }
+    @Test
+    @DisplayName("Retrieve Invalid Events Test")
+    public void retrieveEventsInvalid(){
+        EventRequest request = new EventRequest();
+        request.setAuthToken("test");
+        EventResult result = proxy.getEvents(request);
+        assertNotNull(result);
+        assertNotNull(result.getMessage());
     }
 }
