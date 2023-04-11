@@ -16,6 +16,8 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.util.concurrent.ExecutorService;
@@ -55,12 +57,14 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setTitle("Family Map");
+
         username = view.findViewById(R.id.username);
         password = view.findViewById(R.id.password);
         email = view.findViewById(R.id.email);
         firstName = view.findViewById(R.id.firstName);
         lastName = view.findViewById(R.id.lastName);
-        //TODO: Organize folders
 
         username.addTextChangedListener(new TextWatcher() {
             @Override

@@ -10,10 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.joanzapata.iconify.IconDrawable;
+/*import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
-import com.joanzapata.iconify.fonts.FontAwesomeModule;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;*/
 
 import kyer.harris.familymap.R;
 
@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
                 ((LoginFragment) fragment).registerListener(this);
             }
         }
-
-
-        Iconify.with(new FontAwesomeModule());
+        //Iconify.with(new FontAwesomeModule());
     }
 
     private Fragment createFirstFragment() {
@@ -65,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Lis
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuItem setting = menu.findItem(R.id.menu_settings);
-        setting.setIcon(new IconDrawable(this, FontAwesomeIcons.fa_user)
+        /*setting.setIcon(new IconDrawable(this, FontAwesomeIcons.fa_user)
                 .colorRes(R.color.white)
-                .actionBarSize());
+                .actionBarSize());*/
         super.onCreateOptionsMenu(menu);
         return true;
     }

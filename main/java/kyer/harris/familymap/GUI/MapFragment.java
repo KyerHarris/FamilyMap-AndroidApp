@@ -36,6 +36,7 @@ import java.util.Map;
 import kyer.harris.familymap.R;
 import kyer.harris.familymap.backend.DataCache;
 import Model.*;
+import kyer.harris.familymap.backend.Settings;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
@@ -43,7 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ArrayList<Marker> markers = new ArrayList<>();
     private ArrayList<Polyline> polylines = new ArrayList<>();
     private String eventID = null;
-    //https://stackoverflow.com/questions/39316800/add-onoptionsitemselected-calling-in-fragment
+    private Settings settings = DataCache.getInstance().getSettings();
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -51,13 +52,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
     @Override
     public void onResume(){
+        if(settings.isMaleEvents() != DataCache.getInstance().getSettings().isMaleEvents()){
+
+            settings.setMaleEvents(DataCache.getInstance().getSettings().isMaleEvents());
+        }
+        if(settings.isFemaleEvents() != DataCache.getInstance().getSettings().isFemaleEvents()){
+
+            settings.setFemaleEvents(DataCache.getInstance().getSettings().isFemaleEvents());
+        }
+        if(settings.isMotherSide() != DataCache.getInstance().getSettings().isMotherSide()){
+
+            settings.setMotherSide(DataCache.getInstance().getSettings().isMotherSide());
+        }
+        if(settings.isFatherSide() != DataCache.getInstance().getSettings().isFatherSide()){
+
+            settings.setFatherSide(DataCache.getInstance().getSettings().isFatherSide());
+        }
+        if(settings.isFamilyTreeLines() != DataCache.getInstance().getSettings().isFamilyTreeLines()){
+
+            settings.setFamilyTreeLines(DataCache.getInstance().getSettings().isFamilyTreeLines());
+        }
+        if(settings.isLifeStoryLines() != DataCache.getInstance().getSettings().isLifeStoryLines()){
+
+            settings.setLifeStoryLines(DataCache.getInstance().getSettings().isLifeStoryLines());
+        }
+        /*for (int i = 0; i < polylines.size(); i++) {
+            polylines.get(i).getTag();
+        }*/
+        //TODO: change lines on settings change
         super.onResume();
     }
 
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_map, menu);
+        if(eventID == null) {
+            inflater.inflate(R.menu.menu_map, menu);
+        }
+        else{
+            inflater.inflate(R.menu.menu_back, menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -66,6 +100,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_search_bar:
+                startActivity(new Intent(this.getActivity(), SearchActivity.class));
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(this.getActivity(), SettingsActivity.class));
@@ -79,13 +114,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(layoutInflater, container, savedInstanceState);
         View view = layoutInflater.inflate(R.layout.fragment_map, container, false);
-        // calling the action bar
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setTitle("Family Map");
-        // showing the back button in action bar
-
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -236,9 +266,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private boolean markerClick(Marker marker){
         LinearLayout textbox = getView().findViewById(R.id.eventInfo);
         Event event = (Event)marker.getTag();
-
-
-
         textbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,29 +295,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         return false;
     }
     private void lifeStoryLines(Person person){
-        PolylineOptions polyline = new PolylineOptions();
-        LatLng birth = null;
-        LatLng death = null;
-        LatLng marriage = null;
+        PolylineOptions polyline = new PolylineOptions().width(5).color(0xffff0000);
+        ArrayList<Event> events = new ArrayList<>();
         for (Map.Entry<String, Event> entryB: DataCache.getInstance().getEvents().entrySet()) {
             if(!person.getPersonID().equals(entryB.getValue().getPersonID())){continue;}
-            if(entryB.getValue().getEventType().equals("birth")){
-                birth = new LatLng(entryB.getValue().getLatitude(), entryB.getValue().getLongitude());
-            }
-            else if(entryB.getValue().getEventType().equals("death")){
-                death = new LatLng(entryB.getValue().getLatitude(), entryB.getValue().getLongitude());
-            }
-            else if(entryB.getValue().getEventType().equals("marriage")){
-                marriage = new LatLng(entryB.getValue().getLatitude(), entryB.getValue().getLongitude());
-            }
-            if(marriage != null && birth != null && death != null){
-                polyline.width(5).color(0xffff0000).add(birth);
-                polyline.add(marriage);
-                polyline.add(death);
-                break;
-            }
+            events.add(entryB.getValue());
         }
-        polylines.add(map.addPolyline(polyline));
+        events.sort((o1, o2) -> o1.getYear().compareTo(o2.getYear()));
+        for (int i = 0; i < events.size(); i++) {
+            polyline.add(new LatLng(events.get(i).getLatitude(), events.get(i).getLongitude()));
+        }
+        Polyline pLine = map.addPolyline(polyline);
+        pLine.setTag("lifeStoryLine");
+        polylines.add(pLine);
     }
     private void connectSpouse(Person person, Event event){
         for (Map.Entry<String, Event> iter: DataCache.getInstance().getEvents().entrySet()) {
@@ -299,7 +316,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
             LatLng spouseBirth = new LatLng(iter.getValue().getLatitude(), iter.getValue().getLongitude());
             PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xffffb6c1);
-            polylines.add(map.addPolyline(polyline));
+            Polyline pLine = map.addPolyline(polyline);
+            pLine.setTag("spouseLine");
+            polylines.add(pLine);
             break;
         }
     }
@@ -346,7 +365,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
             LatLng spouseBirth = new LatLng(iter.getValue().getLatitude(), iter.getValue().getLongitude());
             PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xff008000);
-            polylines.add(map.addPolyline(polyline));
+            Polyline pLine = map.addPolyline(polyline);
+            pLine.setTag("femaleAncestor");
+            polylines.add(pLine);
             if(DataCache.getInstance().getPeople().get(personID).getMotherID() != null){
                 connectFemaleAncestors(iter.getValue(), DataCache.getInstance().getPeople().get(personID).getMotherID());
             }
@@ -364,7 +385,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
             LatLng spouseBirth = new LatLng(iter.getValue().getLatitude(), iter.getValue().getLongitude());
             PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xff008000);
-            polylines.add(map.addPolyline(polyline));
+            Polyline pLine = map.addPolyline(polyline);
+            pLine.setTag("maleAncestor");
+            polylines.add(pLine);
             if(DataCache.getInstance().getPeople().get(personID).getFatherID() != null){
                 connectMaleAncestors(iter.getValue(), DataCache.getInstance().getPeople().get(personID).getFatherID());
             }
@@ -382,7 +405,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
             LatLng spouseBirth = new LatLng(iter.getValue().getLatitude(), iter.getValue().getLongitude());
             PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xff008000);
-            polylines.add(map.addPolyline(polyline));
+            Polyline pLine = map.addPolyline(polyline);
+            pLine.setTag("anyAncestor");
+            polylines.add(pLine);
             if(DataCache.getInstance().getPeople().get(personID).getFatherID() != null){
                 connectAncestors(iter.getValue(), DataCache.getInstance().getPeople().get(personID).getFatherID());
             }

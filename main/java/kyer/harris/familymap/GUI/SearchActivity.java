@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
 
 import Model.*;
 import kyer.harris.familymap.backend.DataCache;
@@ -12,9 +13,9 @@ import kyer.harris.familymap.backend.DataCache;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 import android.widget.TextView;
 import kyer.harris.familymap.R;
 
@@ -22,9 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity{
     private static final int PERSON_VIEW_TYPE = 0;
     private static final int EVENT_VIEW_TYPE = 1;
+
+    //TODO: searchview covers recycler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +40,10 @@ public class SearchActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.search_results_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
-
         SearchView searchView = findViewById(R.id.search_view);
+        SearchAdapter adapter = new SearchAdapter(getPersonList("1234"), getEventsList("1234"));
+        recyclerView.setAdapter(adapter);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -53,6 +58,16 @@ public class SearchActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        super.onOptionsItemSelected(item);
+        Intent intent = new Intent(SearchActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        return true;
     }
 
     private List<Person> getPersonList(String query) {
@@ -101,8 +116,8 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Person> entryB : DataCache.getInstance().getFemaleAncestors().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 persons.add(entryA.getValue());
+                                break;
                             }
-                            continue;
                         }
                     }
                 }
@@ -114,7 +129,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Person> entryB : DataCache.getInstance().getMaleAncestors().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 persons.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -138,7 +153,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Person> entryB : DataCache.getInstance().getFemaleAncestors().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 persons.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -151,7 +166,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Person> entryB : DataCache.getInstance().getMaleAncestors().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 persons.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -207,7 +222,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Event> entryB : DataCache.getInstance().getFemaleEvents().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 events.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -220,7 +235,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Event> entryB : DataCache.getInstance().getMaleEvents().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 events.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -244,7 +259,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Event> entryB : DataCache.getInstance().getFemaleEvents().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 events.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -257,7 +272,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Map.Entry<String, Event> entryB : DataCache.getInstance().getMaleEvents().entrySet()) {
                             if (entryA.getKey().equals(entryB.getKey())) {
                                 events.add(entryA.getValue());
-                                continue;
+                                break;
                             }
                         }
                     }
@@ -336,8 +351,8 @@ public class SearchActivity extends AppCompatActivity {
 
         public void bind(Event event) {
             this.event = event;
-            top.setText(event.getEventType());
-            bottom.setText(event.getEventID());
+            top.setText(event.getEventType() + " " + event.getCity() + ", " + event.getCountry() + " (" + event.getYear() + ")");
+            bottom.setText(DataCache.getInstance().getPerson(event.getPersonID()).getFirstName() + " " + DataCache.getInstance().getPerson(event.getPersonID()).getLastName());
         }
 
         @Override

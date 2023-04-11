@@ -39,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     private AppBarConfiguration appBarConfiguration;
-    //https://www.geeksforgeeks.org/how-to-add-and-customize-back-button-of-action-bar-in-android/
+    //TODO: settings filters only event not people
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
