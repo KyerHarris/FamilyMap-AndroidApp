@@ -14,11 +14,11 @@ import java.util.List;
 import kyer.harris.familymap.R;
 
 public class PersonActivityAdapter extends BaseExpandableListAdapter {
-    private Context context;
-    private Person individual;
-    private List<String> expandableListTitle;
-    private List<Event> expandableListEvents;
-    private List<Person> expandableListPersons;
+    private final Context context;
+    private final Person individual;
+    private final List<String> expandableListTitle;
+    private final List<Event> expandableListEvents;
+    private final List<Person> expandableListPersons;
 
     public PersonActivityAdapter(Context context, List<String> expandableListTitle, List<Event> expandableListEvents, List<Person> expandableListPersons, Person individual) {
         this.context = context;
@@ -50,8 +50,8 @@ public class PersonActivityAdapter extends BaseExpandableListAdapter {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_item, null);
         }
-        TextView expandedListTextInfo = (TextView) convertView.findViewById(R.id.expandedListInfo);
-        TextView expandedListTextDescription = (TextView) convertView.findViewById(R.id.expandedListDescription);
+        TextView expandedListTextInfo = convertView.findViewById(R.id.expandedListInfo);
+        TextView expandedListTextDescription = convertView.findViewById(R.id.expandedListDescription);
         switch(listPosition){
             case 0:
                 final Event event = (Event)getChild(listPosition, expandedListPosition);
@@ -64,23 +64,7 @@ public class PersonActivityAdapter extends BaseExpandableListAdapter {
             case 1:
                 person = (Person)getChild(listPosition, expandedListPosition);
                 info = person.getFirstName() + " " + person.getLastName();
-                if(person.getFatherID() != null) {
-                    if (person.getFatherID().equals(individual.getPersonID()) || person.getMotherID().equals(individual.getPersonID())) {
-                        description = "CHILD";
-                    }
-                }
-                if(person.getSpouseID() != null && person.getSpouseID().equals(individual.getPersonID())){
-                    description = "SPOUSE";
-                }
-                else if(individual.getFatherID() != null && individual.getFatherID().equals(person.getPersonID())){
-                    description= "FATHER";
-                }
-                else if(individual.getMotherID() != null && individual.getMotherID().equals(person.getPersonID())){
-                    description = "MOTHER";
-                }
-                else{
-                    description = "CHILD";
-                }
+                description = DataCache.getInstance().getRelationship(person, individual);
                 expandedListTextInfo.setText(info);
                 expandedListTextDescription.setText(description);
                 break;
@@ -123,7 +107,7 @@ public class PersonActivityAdapter extends BaseExpandableListAdapter {
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_group, null);
         }
-        TextView listTitleTextView = (TextView) convertView
+        TextView listTitleTextView = convertView
                 .findViewById(R.id.listTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
         listTitleTextView.setText(listTitle);

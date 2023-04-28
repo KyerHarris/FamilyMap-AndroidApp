@@ -5,10 +5,10 @@ import Results.EventResult;
 import Results.LoginResult;
 import Results.PersonResult;
 import Results.RegisterResult;
+import kyer.harris.familymap.backend.DataCache;
 import kyer.harris.familymap.backend.ServerProxy;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 
 public class  ServerProxyTest {
@@ -28,7 +28,6 @@ public class  ServerProxyTest {
     @Test
     @DisplayName("Register Valid User Test")
     public void testValidRegister(){
-
         RegisterResult result = proxy.register(registerRequest);
         assertNotNull(result);
         assertNotNull(result.getAuthtoken());
@@ -62,36 +61,29 @@ public class  ServerProxyTest {
     @Test
     @DisplayName("Retrieve Valid Relatives Test")
     public void retrieveRelativesValid(){
-        PersonRequest request = new PersonRequest();
-        request.setAuthToken(authToken);
-        PersonResult result = proxy.getPersons(request);
+        PersonResult result = proxy.getPersons();
         assertNotNull(result);
         assertNotNull(result.getData());
     }
     @Test
     @DisplayName("Retrieve Invalid Relatives Test")
     public void retrieveRelativesInvalid(){
-        PersonRequest request = new PersonRequest();
-        request.setAuthToken("test");
-        PersonResult result = proxy.getPersons(request);
+        PersonResult result = proxy.getPersons();
         assertNotNull(result);
         assertNotNull(result.getMessage());
     }
     @Test
     @DisplayName("Retrieve Valid Events Test")
     public void retrieveEventsValid(){
-        EventRequest request = new EventRequest();
-        request.setAuthToken(authToken);
-        EventResult result = proxy.getEvents(request);
+        EventResult result = proxy.getEvents();
         assertNotNull(result);
         assertNotNull(result.getData());
     }
     @Test
     @DisplayName("Retrieve Invalid Events Test")
     public void retrieveEventsInvalid(){
-        EventRequest request = new EventRequest();
-        request.setAuthToken("test");
-        EventResult result = proxy.getEvents(request);
+        DataCache.getInstance().setAuthtoken("test");
+        EventResult result = proxy.getEvents();
         assertNotNull(result);
         assertNotNull(result.getMessage());
     }

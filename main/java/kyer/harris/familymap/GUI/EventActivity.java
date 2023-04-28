@@ -16,9 +16,6 @@ import kyer.harris.familymap.R;
 public class EventActivity extends AppCompatActivity {
     private GoogleMap map;
     private String eventID;
-
-    //TODO: event activity has settings and search
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +29,6 @@ public class EventActivity extends AppCompatActivity {
         eventID = getIntent().getStringExtra("eventid");
         fragment.highlight(eventID);
     }
-
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -40,7 +36,6 @@ public class EventActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         super.onOptionsItemSelected(item);

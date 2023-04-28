@@ -1,6 +1,5 @@
 package kyer.harris.familymap.GUI;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,9 +39,6 @@ public class LoginFragment extends Fragment {
     private static EditText firstName;
     private static EditText lastName;
     private static String gender = null;
-    private RadioGroup genderGroup;
-    private RadioGroup submitGroup;
-    private boolean login;
     private Button submitButton;
     private Button registerButton;
 
@@ -52,7 +48,6 @@ public class LoginFragment extends Fragment {
     public void registerListener(Listener listener){
         this.listener = listener;
     }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_login, container, false);
@@ -117,22 +112,18 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        genderGroup = view.findViewById(R.id.gender_group);
+        RadioGroup genderGroup = view.findViewById(R.id.gender_group);
         genderGroup.clearCheck();
-        genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId){
-                if(checkedId == R.id.radio_male){
-                    gender = "m";
-                    checkWatchers();
-                }
-                else{
-                    gender = "f";
-                    checkWatchers();
-                }
+        genderGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if(checkedId == R.id.radio_male){
+                gender = "m";
+                checkWatchers();
+            }
+            else{
+                gender = "f";
+                checkWatchers();
             }
         });
-
         submitButton = view.findViewById(R.id.login_submit_button);
         submitButton.setEnabled(false);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -164,22 +155,18 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-
         return view;
     }
     private static class PeopleTask implements Runnable{
         private final Handler messageHandler;
-        private Listener listener;
-
+        private final Listener listener;
         public PeopleTask(Handler messageHandler, Listener listener){this.messageHandler = messageHandler; this.listener = listener;}
         @Override
         public void run() {
             if (DataCache.getInstance().getPersonID() != null) {
-                PersonRequest personRequest = new PersonRequest();
-                EventRequest eventRequest = new EventRequest();
                 ServerProxy server = new ServerProxy();
-                PersonResult personResult = server.getPersons(personRequest);
-                EventResult eventResult = server.getEvents(eventRequest);
+                PersonResult personResult = server.getPersons();
+                EventResult eventResult = server.getEvents();
                 Message message = Message.obtain();
                 Bundle messageBundle = new Bundle();
                 messageBundle.putBoolean(IS_SUCCESS, personResult.isSuccess());
@@ -197,14 +184,11 @@ public class LoginFragment extends Fragment {
             }
         }
     }
-
     private static class LoginTask implements Runnable{
         private final Handler messageHandler;
-
         public LoginTask(Handler messageHandler){
             this.messageHandler = messageHandler;
         }
-
         @Override
         public void run(){
             LoginRequest request = new LoginRequest(username.getText().toString(), password.getText().toString());
@@ -222,14 +206,11 @@ public class LoginFragment extends Fragment {
             messageHandler.sendMessage(message);
         }
     }
-
     private static class RegisterTask implements Runnable{
         private final Handler messageHandler;
-
         public RegisterTask(Handler messageHandler){
             this.messageHandler = messageHandler;
         }
-
         @Override
         public void run(){
             RegisterRequest request = new RegisterRequest(username.getText().toString(), password.getText().toString(), email.getText().toString(), firstName.getText().toString(), lastName.getText().toString(), gender);
@@ -253,9 +234,7 @@ public class LoginFragment extends Fragment {
             Bundle bundle = message.getData();
             boolean success = bundle.getBoolean(IS_SUCCESS, false);
             String handlerMessage = bundle.getString(MESSAGE, null);
-            String handlerUser = bundle.getString(NAME, null);
-            if (success == false) {
-                Context context = getView().getContext();
+            if (!success) {
                 int duration = Toast.LENGTH_LONG;
                 Toast.makeText(getActivity(), handlerMessage, duration).show();
             }
@@ -265,14 +244,13 @@ public class LoginFragment extends Fragment {
             }
         }
     };
-
     Handler SubmitHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message message){
             Bundle bundle = message.getData();
             boolean success = bundle.getBoolean(IS_SUCCESS, false);
             String handlerMessage = bundle.getString(MESSAGE, "");
-            if(success == false){
+            if(!success){
                 int duration = Toast.LENGTH_LONG;
                 Toast.makeText(getActivity(), handlerMessage, duration).show();
             }
@@ -301,7 +279,6 @@ public class LoginFragment extends Fragment {
         else if(gender == null){
             register = false;
         }
-
         if(login){
             submitButton.setEnabled(true);
         }

@@ -2,7 +2,6 @@ package kyer.harris.familymap.GUI;
 
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import androidx.annotation.NonNull;
@@ -13,16 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import kyer.harris.familymap.R;
 import kyer.harris.familymap.backend.DataCache;
@@ -36,10 +25,6 @@ public class SettingsActivity extends AppCompatActivity {
     private SwitchMaterial maleEvents;
     private SwitchMaterial femaleEvents;
     private LinearLayout logout;
-
-
-    private AppBarConfiguration appBarConfiguration;
-    //TODO: settings filters only event not people
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,10 +103,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

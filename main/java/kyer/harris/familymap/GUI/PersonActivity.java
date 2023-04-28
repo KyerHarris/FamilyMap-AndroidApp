@@ -27,7 +27,6 @@ import kyer.harris.familymap.backend.PersonActivityAdapter;
 
 public class PersonActivity extends AppCompatActivity {
     Person person;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +59,9 @@ public class PersonActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         firstName.setText(person.getFirstName());
         lastName.setText(person.getLastName());
         gender.setText(person.getGender());
-        //https://www.digitalocean.com/community/tutorials/android-expandablelistview-example-tutorial
     }
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -72,7 +69,6 @@ public class PersonActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_back, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         super.onOptionsItemSelected(item);
@@ -82,26 +78,19 @@ public class PersonActivity extends AppCompatActivity {
         startActivity(intent);
         return true;
     }
-
     public ExpandableListAdapter createActivityAdapter(){
         List<String> titles = new ArrayList<>();
         titles.add("LIFE EVENTS");
         titles.add("FAMILY");
-
         List<Event> lifeEvents = new ArrayList<>();
-        Event birth = null;
-        Event marriage = null;
-        Event death = null;
-        for (Map.Entry<String, Event> m: DataCache.getInstance().getEvents().entrySet()){
-            if(!m.getValue().getPersonID().equals(person.getPersonID()))continue;
-            if(m.getValue().getEventType().equals("birth")) birth = m.getValue();
-            else if(m.getValue().getEventType().equals("marriage")) marriage = m.getValue();
-            else if(m.getValue().getEventType().equals("death")) death = m.getValue();
+        if(!DataCache.getInstance().getSettings().isMotherSide() && DataCache.getInstance().getMaternalAncestors().get(person.getPersonID()) != null){}
+        else if(!DataCache.getInstance().getSettings().isFatherSide() && DataCache.getInstance().getPaternalAncestors().get(person.getPersonID()) != null){}
+        else{
+            if ((DataCache.getInstance().getSettings().isMaleEvents() && person.getGender().equals("m")) ||
+                    (DataCache.getInstance().getSettings().isFemaleEvents() && person.getGender().equals("f"))) {
+                lifeEvents = DataCache.getInstance().getIndividualsEvents(person.getPersonID());
+            }
         }
-        lifeEvents.add(birth);
-        lifeEvents.add(marriage);
-        lifeEvents.add(death);
-
         List<Person> family = new ArrayList<>();
         if(person.getSpouseID() != null){
             family.add(DataCache.getInstance().getPerson(person.getSpouseID()));
@@ -113,14 +102,12 @@ public class PersonActivity extends AppCompatActivity {
             family.add(DataCache.getInstance().getPerson(person.getFatherID()));
         }
         for (Map.Entry<String, Person> m: DataCache.getInstance().getPeople().entrySet()) {
-            if(m.getValue().getFatherID() == null);
-            else{
+            if(m.getValue().getFatherID() != null){
                 if(m.getValue().getFatherID().equals(person.getPersonID())) {
                     family.add(m.getValue());
                 }
             }
-            if(m.getValue().getMotherID() == null) continue;
-            else{
+            if(m.getValue().getMotherID() != null){
                 if(m.getValue().getMotherID().equals(person.getPersonID())){
                     family.add(m.getValue());
                 }

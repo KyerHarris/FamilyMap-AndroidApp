@@ -28,9 +28,7 @@ public class ServerProxy {
             http = (HttpURLConnection)url.openConnection();
             http.setRequestMethod("POST");
             http.setDoOutput(true);
-            //http.addRequestProperty("Authorization", "authtoken");
-            //http.addRequestProperty("Accept", "application/json");
-            http.connect(); //sends request and receives response
+            http.connect();
             OutputStream reqBody = http.getOutputStream();
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
@@ -58,7 +56,6 @@ public class ServerProxy {
         }
         return result;
     }
-
     public RegisterResult register(RegisterRequest request){
         RegisterResult result = null;
         HttpURLConnection http = null;
@@ -67,9 +64,7 @@ public class ServerProxy {
             http = (HttpURLConnection)url.openConnection();
             http.setRequestMethod("POST");
             http.setDoOutput(true);
-            //http.addRequestProperty("Authorization", "authtoken");
-            //http.addRequestProperty("Accept", "application/json");
-            http.connect(); //sends request and receives response
+            http.connect();
             OutputStream reqBody = http.getOutputStream();
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
@@ -98,8 +93,7 @@ public class ServerProxy {
         }
         return result;
     }
-
-    public EventResult getEvents(EventRequest request){
+    public EventResult getEvents(){
         EventResult result = null;
         try{
             URL url = new URL("http://" + serverHost + ":" + serverPort + "/event");
@@ -107,7 +101,7 @@ public class ServerProxy {
             http.setRequestMethod("GET");
             http.setDoOutput(false);
             http.addRequestProperty("Authorization", DataCache.getInstance().getAuthtoken());
-            http.connect(); //sends request and receives response
+            http.connect();
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
@@ -129,7 +123,7 @@ public class ServerProxy {
         }
         return result;
     }
-    public PersonResult getPersons(PersonRequest request){
+    public PersonResult getPersons(){
         PersonResult result = null;
         try{
             URL url = new URL("http://" + serverHost + ":" + serverPort + "/person");
@@ -137,7 +131,7 @@ public class ServerProxy {
             http.setRequestMethod("GET");
             http.setDoOutput(false);
             http.addRequestProperty("Authorization", DataCache.getInstance().getAuthtoken());
-            http.connect(); //sends request and receives response
+            http.connect();
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
@@ -157,7 +151,6 @@ public class ServerProxy {
         }
         return result;
     }
-
     private static String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         InputStreamReader sr = new InputStreamReader(is);

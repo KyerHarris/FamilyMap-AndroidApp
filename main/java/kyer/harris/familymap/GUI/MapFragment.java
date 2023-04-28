@@ -30,7 +30,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import androidx.appcompat.app.ActionBar;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import kyer.harris.familymap.R;
@@ -41,10 +40,10 @@ import kyer.harris.familymap.backend.Settings;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private GoogleMap map;
-    private ArrayList<Marker> markers = new ArrayList<>();
-    private ArrayList<Polyline> polylines = new ArrayList<>();
+    private final ArrayList<Marker> markers = new ArrayList<>();
+    private final ArrayList<Polyline> polylines = new ArrayList<>();
     private String eventID = null;
-    private Settings settings = DataCache.getInstance().getSettings();
+    private final Settings settings = new Settings();
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -53,37 +52,134 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onResume(){
         if(settings.isMaleEvents() != DataCache.getInstance().getSettings().isMaleEvents()){
-
+            if(DataCache.getInstance().getSettings().isMaleEvents()) {
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPerson(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp.getGender().equals("m")) {
+                        markers.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPerson(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp.getGender().equals("m")) {
+                        markers.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setMaleEvents(DataCache.getInstance().getSettings().isMaleEvents());
         }
         if(settings.isFemaleEvents() != DataCache.getInstance().getSettings().isFemaleEvents()){
-
+            if(DataCache.getInstance().getSettings().isFemaleEvents()) {
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPerson(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp.getGender().equals("f")) {
+                        markers.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPerson(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp.getGender().equals("f")) {
+                        markers.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setFemaleEvents(DataCache.getInstance().getSettings().isFemaleEvents());
         }
         if(settings.isMotherSide() != DataCache.getInstance().getSettings().isMotherSide()){
-
+            if(DataCache.getInstance().getSettings().isMotherSide()) {
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getMaternalAncestors().get(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp != null) {
+                        markers.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getMaternalAncestors().get(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp != null) {
+                        markers.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setMotherSide(DataCache.getInstance().getSettings().isMotherSide());
         }
         if(settings.isFatherSide() != DataCache.getInstance().getSettings().isFatherSide()){
-
+            if(DataCache.getInstance().getSettings().isFatherSide()) {
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPaternalAncestors().get(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp != null) {
+                        markers.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < markers.size(); i++) {
+                    Person temp = DataCache.getInstance().getPaternalAncestors().get(((Event) markers.get(i).getTag()).getPersonID());
+                    if (temp != null) {
+                        markers.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setFatherSide(DataCache.getInstance().getSettings().isFatherSide());
         }
         if(settings.isFamilyTreeLines() != DataCache.getInstance().getSettings().isFamilyTreeLines()){
-
+            if(DataCache.getInstance().getSettings().isFamilyTreeLines()){
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).contains("Ancestor")){
+                        polylines.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).contains("Ancestor")){
+                        polylines.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setFamilyTreeLines(DataCache.getInstance().getSettings().isFamilyTreeLines());
         }
         if(settings.isLifeStoryLines() != DataCache.getInstance().getSettings().isLifeStoryLines()){
-
+            if(DataCache.getInstance().getSettings().isLifeStoryLines()){
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).equals("lifeStoryLine")){
+                        polylines.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).equals("lifeStoryLine")){
+                        polylines.get(i).setVisible(false);
+                    }
+                }
+            }
             settings.setLifeStoryLines(DataCache.getInstance().getSettings().isLifeStoryLines());
         }
-        /*for (int i = 0; i < polylines.size(); i++) {
-            polylines.get(i).getTag();
-        }*/
-        //TODO: change lines on settings change
+        if(settings.isSpouseLines() != DataCache.getInstance().getSettings().isSpouseLines()){
+            if(DataCache.getInstance().getSettings().isSpouseLines()){
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).equals("spouseLine")){
+                        polylines.get(i).setVisible(true);
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(((String)polylines.get(i).getTag()).equals("spouseLine")){
+                        polylines.get(i).setVisible(false);
+                    }
+                }
+            }
+            settings.setSpouseLines(DataCache.getInstance().getSettings().isSpouseLines());
+        }
         super.onResume();
     }
-
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         if(eventID == null) {
@@ -94,7 +190,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -121,7 +216,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         return view;
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -137,124 +231,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         }
     }
-
     @Override
-    public void onMapLoaded() {
-        // You probably don't need this callback. It occurs after onMapReady and I have seen
-        // cases where you get an error when adding markers or otherwise interacting with the map in
-        // onMapReady(...) because the map isn't really all the way ready. If you see that, just
-        // move all code where you interact with the map (everything after
-        // map.setOnMapLoadedCallback(...) above) to here.
-    }
-    private ArrayList<Person> personArray(HashMap<String, Person> mapA, HashMap<String, Person> mapB) {
-        ArrayList<Person> persons = new ArrayList<>();
-        for (Map.Entry<String, Person> entryA : mapA.entrySet()) {
-            for (Map.Entry<String, Person> entryB : mapB.entrySet()) {
-                if (entryA.getKey().equals(entryB.getKey())) {
-                    persons.add(entryA.getValue());
-                }
-            }
-        }
-        return persons;
-    }
-
-    public void eventMap(Person person, Event event){
-
-    }
-    private ArrayList<Person> personArray(HashMap<String, Person> mapA){
-        ArrayList<Person> persons = new ArrayList<>();
-        for (Map.Entry<String, Person> entryA : mapA.entrySet()) {
-            persons.add(entryA.getValue());
-
-        }
-        return persons;
-    }
-    private void populateMap(HashMap<String, Event> mapA, HashMap<String, Event> mapB){
-        for (Map.Entry<String, Event> entryA : mapA.entrySet()) {
-            for (Map.Entry<String, Event> entryB: mapB.entrySet()) {
-                if(entryA.getKey().equals(entryB.getKey())){
-                    Float color;
-                    if (entryA.getValue().getEventType().equals("birth")) {
-                        color = BitmapDescriptorFactory.HUE_AZURE;
-                    } else if (entryA.getValue().getEventType().equals("marriage")) {
-                        color = BitmapDescriptorFactory.HUE_MAGENTA;
-                    } else if (entryA.getValue().getEventType().equals("death")) {
-                        color = BitmapDescriptorFactory.HUE_ORANGE;
-                    } else {
-                        color = BitmapDescriptorFactory.HUE_YELLOW;
-                    }
-                    LatLng temp = new LatLng(entryA.getValue().getLatitude(), entryA.getValue().getLongitude());
-                    MarkerOptions marker = new MarkerOptions().position(temp).icon(BitmapDescriptorFactory.defaultMarker(color));
-                    markers.add(map.addMarker(marker));
-                    markers.get(markers.size()-1).setTag(entryA.getValue());
-                    continue;
-                }
-            }
-        }
-    }
-    private void populateMap(HashMap<String, Event> mapA){
-        for (Map.Entry<String, Event> e : mapA.entrySet()) {
-            Float color;
-            if (e.getValue().getEventType().equals("birth")) {
+    public void onMapLoaded() {}
+    private void createMap(){
+        ArrayList<Event> events = DataCache.getInstance().currEvents();
+        for (int i = 0; i < events.size(); i++) {
+            float color;
+            if (events.get(i).getEventType().equals("birth")) {
                 color = BitmapDescriptorFactory.HUE_AZURE;
-            } else if (e.getValue().getEventType().equals("marriage")) {
+            } else if (events.get(i).getEventType().equals("marriage")) {
                 color = BitmapDescriptorFactory.HUE_MAGENTA;
-            } else if (e.getValue().getEventType().equals("death")) {
+            } else if (events.get(i).getEventType().equals("death")) {
                 color = BitmapDescriptorFactory.HUE_ORANGE;
             } else {
                 color = BitmapDescriptorFactory.HUE_YELLOW;
             }
-            LatLng temp = new LatLng(e.getValue().getLatitude(), e.getValue().getLongitude());
+            LatLng temp = new LatLng(events.get(i).getLatitude(), events.get(i).getLongitude());
             MarkerOptions marker = new MarkerOptions().position(temp).icon(BitmapDescriptorFactory.defaultMarker(color));
             markers.add(map.addMarker(marker));
-            markers.get(markers.size()-1).setTag(e.getValue());
-        }
-    }
-    private void createMap(){
-        //Both sides of tree
-        if (DataCache.getInstance().getSettings().isFatherSide() && DataCache.getInstance().getSettings().isMotherSide()) {
-            if(DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getEvents());
-            }
-            //all sides just male
-            else if(DataCache.getInstance().getSettings().isMaleEvents() && !DataCache.getInstance().getSettings().isFemaleEvents()){
-                populateMap(DataCache.getInstance().getMaleEvents());
-            }
-            //all sides just female
-            else if(!DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()){
-                populateMap(DataCache.getInstance().getFemaleEvents());
-            }
-        }
-        //just father's side of tree
-        else if (!DataCache.getInstance().getSettings().isMotherSide() && DataCache.getInstance().getSettings().isFatherSide()) {
-            //father's side male & female
-            if (DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getPaternalEvents());
-            }
-            //father's side just male
-            else if (DataCache.getInstance().getSettings().isMaleEvents() && !DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getPaternalEvents(), DataCache.getInstance().getMaleEvents());
-            }
-            //father's side just female
-            else if (!DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getPaternalEvents(), DataCache.getInstance().getFemaleEvents());
-            }
-        }
-        //mother's side of tree
-        else if (DataCache.getInstance().getSettings().isMotherSide() && !DataCache.getInstance().getSettings().isFatherSide()) {
-            //mother's side male & female
-            if (DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getMaternalEvents());
-
-            }
-            //mother's side just male
-            else if (DataCache.getInstance().getSettings().isMaleEvents() && !DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getMaternalEvents(), DataCache.getInstance().getMaleEvents());
-            }
-            //mother's side just female
-            else if (!DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                populateMap(DataCache.getInstance().getMaternalEvents(), DataCache.getInstance().getFemaleEvents());
-            }
+            markers.get(markers.size()-1).setTag(events.get(i));
         }
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -296,12 +291,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
     private void lifeStoryLines(Person person){
         PolylineOptions polyline = new PolylineOptions().width(5).color(0xffff0000);
-        ArrayList<Event> events = new ArrayList<>();
-        for (Map.Entry<String, Event> entryB: DataCache.getInstance().getEvents().entrySet()) {
-            if(!person.getPersonID().equals(entryB.getValue().getPersonID())){continue;}
-            events.add(entryB.getValue());
-        }
-        events.sort((o1, o2) -> o1.getYear().compareTo(o2.getYear()));
+        ArrayList<Event> events;
+        events = DataCache.getInstance().getIndividualsEvents(person.getPersonID());
         for (int i = 0; i < events.size(); i++) {
             polyline.add(new LatLng(events.get(i).getLatitude(), events.get(i).getLongitude()));
         }
@@ -327,7 +318,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if(person.getFatherID() != null && DataCache.getInstance().getSettings().isFatherSide()) {
             //male and female ancestors
             if(DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                connectAncestors(event, person.getFatherID());
+                connectAncestors(event, person.getFatherID(), 10);
             }
             //female ancestors
             else if(!DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()){
@@ -342,7 +333,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if(person.getMotherID() != null && DataCache.getInstance().getSettings().isMotherSide()){
             //male and female ancestors
             if(DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()) {
-                connectAncestors(event, person.getMotherID());
+                connectAncestors(event, person.getMotherID(), 10);
             }
             //female ancestors
             else if(!DataCache.getInstance().getSettings().isMaleEvents() && DataCache.getInstance().getSettings().isFemaleEvents()){
@@ -394,30 +385,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             break;
         }
     }
-    private void connectAncestors(Event event, String personID) {
+    private void connectAncestors(Event event, String personID, int size) {
+        ArrayList<Event> events = new ArrayList<>();
         for (Map.Entry<String, Event> iter : DataCache.getInstance().getEvents().entrySet()) {
             if (!iter.getValue().getPersonID().equals(personID)) {
                 continue;
             }
-            if (!iter.getValue().getEventType().equals("birth")) {
-                continue;
-            }
-            LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
-            LatLng spouseBirth = new LatLng(iter.getValue().getLatitude(), iter.getValue().getLongitude());
-            PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xff008000);
-            Polyline pLine = map.addPolyline(polyline);
-            pLine.setTag("anyAncestor");
-            polylines.add(pLine);
-            if(DataCache.getInstance().getPeople().get(personID).getFatherID() != null){
-                connectAncestors(iter.getValue(), DataCache.getInstance().getPeople().get(personID).getFatherID());
-            }
-            if(DataCache.getInstance().getPeople().get(personID).getMotherID() != null){
-                connectAncestors(iter.getValue(), DataCache.getInstance().getPeople().get(personID).getMotherID());
-            }
-            break;
+            events.add(iter.getValue());
+        }
+        events.sort((o1, o2) -> o1.getYear().compareTo(o2.getYear()));
+        LatLng currEvent = new LatLng(event.getLatitude(), event.getLongitude());
+        LatLng spouseBirth = new LatLng(events.get(0).getLatitude(), events.get(0).getLongitude());
+        PolylineOptions polyline = new PolylineOptions().add(currEvent).add(spouseBirth).color(0xff008000).width(size);
+        Polyline pLine = map.addPolyline(polyline);
+        pLine.setTag("anyAncestor");
+        polylines.add(pLine);
+        if(DataCache.getInstance().getPeople().get(personID).getFatherID() != null){
+            connectAncestors(events.get(0), DataCache.getInstance().getPeople().get(personID).getFatherID(), size - 2);
+        }
+        if(DataCache.getInstance().getPeople().get(personID).getMotherID() != null){
+            connectAncestors(events.get(0), DataCache.getInstance().getPeople().get(personID).getMotherID(), size - 2);
         }
     }
-
     public void highlight(String eventID){
         this.eventID = eventID;
     }
